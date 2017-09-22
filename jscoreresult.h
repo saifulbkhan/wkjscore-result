@@ -1,7 +1,6 @@
 #ifndef jscoreresult_h
 #define jscoreresult_h
 
-#include <glib.h>
 #include <webkit2/webkit2.h>
 #include <JavaScriptCore/JavaScript.h>
 

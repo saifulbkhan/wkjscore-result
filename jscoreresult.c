@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "jscoreresult.h"
 
 char*
@@ -13,7 +14,7 @@ process_js_result_as_string (WebKitJavascriptResult *js_result)
                                    js_value, NULL);
   max_size = JSStringGetMaximumUTF8CStringSize (js_string);
   if (max_size) {
-    retval = g_malloc (max_size);
+    retval = malloc (max_size);
     JSStringGetUTF8CString (js_string, retval, max_size);
   }
   JSStringRelease (js_string);
