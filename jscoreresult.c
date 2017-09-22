@@ -1,4 +1,4 @@
-#include <jscoreresult.h>
+#include "jscoreresult.h"
 
 char*
 process_js_result_as_string (WebKitJavascriptResult *js_result)
