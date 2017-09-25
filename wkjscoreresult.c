@@ -1,16 +1,16 @@
 #include <JavaScriptCore/JavaScript.h>
-#include "webkitjsresult.h"
+#include "wkjscoreresult.h"
 
-struct _WebkitJSResult
+struct _WkJsCoreResult
 {
   GObject parent_instance;
 };
 
-G_DEFINE_TYPE (WebkitJSResult, webkit_jsresult, G_TYPE_OBJECT)
+G_DEFINE_TYPE (WkJsCoreResult, wk_js_core_result, G_TYPE_OBJECT)
 
 /*
- * process_js_result_as_string:
- * @wkjsresult: a WebkitJSResult object
+ * wk_js_core_result_process_result_as_string:
+ * @wkjscresult: a WkJsCoreResult object
  * @js_result: a WebKitJavascriptResult object to process value from
  *
  * Extracts the string value within a WebKitJavascriptResult object
@@ -18,8 +18,8 @@ G_DEFINE_TYPE (WebkitJSResult, webkit_jsresult, G_TYPE_OBJECT)
  * Return value: Pointer to string
  */
 gchar*
-process_js_result_as_string (WebkitJSResult *wkjsresult,
-                             WebKitJavascriptResult *js_result)
+wk_js_core_result_process_result_as_string (WkJsCoreResult *wkjscresult,
+                                            WebKitJavascriptResult *js_result)
 {
   JSValueRef js_value;
   JSStringRef js_string;
@@ -40,8 +40,8 @@ process_js_result_as_string (WebkitJSResult *wkjsresult,
 }
 
 /*
- * process_js_result_as_number:
- * @wkjsresult: a WebkitJSResult object
+ * wk_js_core_result_process_result_as_number:
+ * @wkjscresult: a WkJsCoreResult object
  * @js_result: a WebKitJavascriptResult object to process value from
  *
  * Extracts the number value within a WebKitJavascriptResult object
@@ -49,8 +49,8 @@ process_js_result_as_string (WebkitJSResult *wkjsresult,
  * Return value: Number as double
  */
 gdouble
-process_js_result_as_number (WebkitJSResult *wkjsresult,
-                             WebKitJavascriptResult *js_result)
+wk_js_core_result_process_result_as_number (WkJsCoreResult *wkjscresult,
+                                            WebKitJavascriptResult *js_result)
 {
   JSValueRef js_value;
   double number;
@@ -58,16 +58,16 @@ process_js_result_as_number (WebkitJSResult *wkjsresult,
   js_value = webkit_javascript_result_get_value (js_result);
 
   number = JSValueToNumber (webkit_javascript_result_get_global_context (js_result),
-                          js_value, NULL);
+                            js_value, NULL);
   return (gdouble) number;
 }
 
 static void
-webkit_jsresult_class_init (WebkitJSResultClass *klass)
+wk_js_core_result_class_init (WkJsCoreResultClass *klass)
 {
 }
 
 static void
-webkit_jsresult_init (WebkitJSResult *self)
+wk_js_core_result_init (WkJsCoreResult *self)
 {
 }
