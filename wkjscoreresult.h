@@ -30,25 +30,25 @@ G_DECLARE_FINAL_TYPE (WkJsCoreResult,
  * Method definitions
  */
 WkJsCoreType
-wk_js_core_result_get_result_type (WkJsCoreResult *wkjscresult,
-                                   WebKitJavascriptResult *js_result);
+wk_js_core_result_get_result_type          (WkJsCoreResult         *result,
+                                            WebKitJavascriptResult *js_result);
 
 gchar*
-wk_js_core_result_create_json_from_result (WkJsCoreResult *wkjscresult,
-                                           WebKitJavascriptResult *js_result,
-                                           guint indent);
+wk_js_core_result_create_json_from_result  (WkJsCoreResult         *result,
+                                            WebKitJavascriptResult *js_result,
+                                            guint                  indent);
 
 gchar*
-wk_js_core_result_process_result_as_string (WkJsCoreResult *wkjscresult,
+wk_js_core_result_process_result_as_string (WkJsCoreResult         *result,
                                             WebKitJavascriptResult *js_result);
 
 gdouble
-wk_js_core_result_process_result_as_number (WkJsCoreResult *wkjscresult,
+wk_js_core_result_process_result_as_number (WkJsCoreResult         *result,
                                             WebKitJavascriptResult *js_result);
 
 gboolean
-wk_js_core_result_process_result_as_boolean (WkJsCoreResult *wkjscresult,
-					     WebKitJavascriptResult *js_result);
+wk_js_core_result_process_result_as_boolean (WkJsCoreResult        *result,
+					                                  WebKitJavascriptResult *js_result);
 
 G_END_DECLS
 

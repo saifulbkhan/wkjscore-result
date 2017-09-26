@@ -30,7 +30,7 @@ wk_js_core_result_class_init (WkJsCoreResultClass *klass)
  * Return value: A WkJsCoreType value
  */
 WkJsCoreType
-wk_js_core_result_get_result_type (WkJsCoreResult *wkjscresult,
+wk_js_core_result_get_result_type (WkJsCoreResult         *result,
                                    WebKitJavascriptResult *js_result)
 {
   JSValueRef js_value;
@@ -52,6 +52,21 @@ wk_js_core_result_get_result_type (WkJsCoreResult *wkjscresult,
   return _OBJECT;
 }
 
+gchar*
+js_string_to_gchar (JSStringRef js_string)
+{
+  size_t max_size;
+  char *retval = NULL;
+
+  max_size = JSStringGetMaximumUTF8CStringSize (js_string);
+  if (max_size) {
+    retval = g_malloc (max_size);
+    JSStringGetUTF8CString (js_string, retval, max_size);
+  }
+
+  return (gchar*) retval;
+}
+
 /*
  * wk_js_core_result_create_json_from_result:
  * @wkjscresult: a WkJsCoreResult object
@@ -62,26 +77,19 @@ wk_js_core_result_get_result_type (WkJsCoreResult *wkjscresult,
  * Return value: Pointer to string
  */
 gchar*
-wk_js_core_result_create_json_from_result (WkJsCoreResult         *wkjscresult,
+wk_js_core_result_create_json_from_result (WkJsCoreResult         *result,
                                            WebKitJavascriptResult *js_result,
-                                           guint indent)
+                                           guint                  indent)
 {
   JSValueRef js_value;
   JSContextRef js_ctx;
   JSStringRef js_string;
-  size_t max_size;
-  char *retval = NULL;
 
   js_value = webkit_javascript_result_get_value (js_result);
   js_ctx = webkit_javascript_result_get_global_context (js_result);
   js_string = JSValueCreateJSONString (js_ctx, js_value, indent, NULL);
-  max_size = JSStringGetMaximumUTF8CStringSize (js_string);
-  if (max_size) {
-    retval = g_malloc (max_size);
-    JSStringGetUTF8CString (js_string, retval, max_size);
-  }
 
-  return (gchar*) retval;
+  return js_string_to_gchar(js_string);
 }
 
 /*
@@ -94,25 +102,18 @@ wk_js_core_result_create_json_from_result (WkJsCoreResult         *wkjscresult,
  * Return value: Pointer to string
  */
 gchar*
-wk_js_core_result_process_result_as_string (WkJsCoreResult *wkjscresult,
+wk_js_core_result_process_result_as_string (WkJsCoreResult         *result,
                                             WebKitJavascriptResult *js_result)
 {
   JSValueRef js_value;
+  JSContextRef js_ctx;
   JSStringRef js_string;
-  size_t max_size;
-  char *retval = NULL;
 
   js_value = webkit_javascript_result_get_value (js_result);
-  js_string = JSValueToStringCopy (webkit_javascript_result_get_global_context (js_result),
-                                   js_value, NULL);
-  max_size = JSStringGetMaximumUTF8CStringSize (js_string);
-  if (max_size) {
-    retval = g_malloc (max_size);
-    JSStringGetUTF8CString (js_string, retval, max_size);
-  }
-  JSStringRelease (js_string);
+  js_ctx = webkit_javascript_result_get_global_context (js_result);
+  js_string = JSValueToStringCopy (js_ctx, js_value, NULL);
 
-  return (gchar*) retval;
+  return js_string_to_gchar(js_string);
 }
 
 /*
@@ -125,16 +126,16 @@ wk_js_core_result_process_result_as_string (WkJsCoreResult *wkjscresult,
  * Return value: Number as double
  */
 gdouble
-wk_js_core_result_process_result_as_number (WkJsCoreResult *wkjscresult,
+wk_js_core_result_process_result_as_number (WkJsCoreResult         *result,
                                             WebKitJavascriptResult *js_result)
 {
   JSValueRef js_value;
+  JSContextRef js_ctx;
   double number;
 
   js_value = webkit_javascript_result_get_value (js_result);
-
-  number = JSValueToNumber (webkit_javascript_result_get_global_context (js_result),
-                            js_value, NULL);
+  js_ctx = webkit_javascript_result_get_global_context (js_result);
+  number = JSValueToNumber (js_ctx, js_value, NULL);
   return (gdouble) number;
 }
 
@@ -148,14 +149,15 @@ wk_js_core_result_process_result_as_number (WkJsCoreResult *wkjscresult,
  * Return value: Boolean value
  */
 gboolean
-wk_js_core_result_process_result_as_boolean(WkJsCoreResult *wkjscresult,
-                                            WebKitJavascriptResult *js_result)
+wk_js_core_result_process_result_as_boolean (WkJsCoreResult         *result,
+                                             WebKitJavascriptResult *js_result)
 {
   JSValueRef js_value;
+  JSContextRef js_ctx;
   bool boolean;
 
   js_value = webkit_javascript_result_get_value (js_result);
-  boolean = JSValueToBoolean (webkit_javascript_result_get_global_context (js_result),
-                              js_value);
+  js_ctx = webkit_javascript_result_get_global_context (js_result);
+  boolean = JSValueToBoolean (js_ctx, js_value);
   return (gboolean) boolean;
 }
