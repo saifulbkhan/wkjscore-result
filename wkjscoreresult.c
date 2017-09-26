@@ -8,6 +8,50 @@ struct _WkJsCoreResult
 
 G_DEFINE_TYPE (WkJsCoreResult, wk_js_core_result, G_TYPE_OBJECT)
 
+static void
+wk_js_core_result_init (WkJsCoreResult *self)
+{
+  /* No special initializaion */
+}
+
+static void
+wk_js_core_result_class_init (WkJsCoreResultClass *klass)
+{
+  /* No special class initialization */
+}
+
+/*
+ * wk_js_core_result_get_result_type
+ * @wkjscoreresult: a WkJsCoreResult object
+ * @js_result: a WebKitJavascriptResult object to get value type from
+ *
+ * Gets the type of value represented by js_result object
+ *
+ * Return value: A WkJsCoreType value
+ */
+WkJsCoreType
+wk_js_core_result_get_result_type (WkJsCoreResult *wkjscresult,
+                                   WebKitJavascriptResult *js_result)
+{
+  JSValueRef js_value;
+  JSContextRef js_ctx;
+
+  js_value = webkit_javascript_result_get_value (js_result);
+  js_ctx = webkit_javascript_result_get_global_context(js_result);
+  if (JSValueIsUndefined (js_ctx, js_value))
+    return _UNDEFINED;
+  if (JSValueIsNull (js_ctx, js_value))
+    return _NULL;
+  if (JSValueIsBoolean (js_ctx, js_value))
+    return _BOOLEAN;
+  if (JSValueIsNumber (js_ctx, js_value))
+    return _NUMBER;
+  if (JSValueIsString (js_ctx, js_value))
+    return _STRING;
+  g_assert (JSValueIsObject (js_ctx, js_value));
+  return _OBJECT;
+}
+
 /*
  * wk_js_core_result_process_result_as_string:
  * @wkjscresult: a WkJsCoreResult object
@@ -82,14 +126,4 @@ wk_js_core_result_process_result_as_boolean(WkJsCoreResult *wkjscresult,
   boolean = JSValueToBoolean (webkit_javascript_result_get_global_context (js_result),
                               js_value);
   return (gboolean) boolean;
-}
-
-static void
-wk_js_core_result_class_init (WkJsCoreResultClass *klass)
-{
-}
-
-static void
-wk_js_core_result_init (WkJsCoreResult *self)
-{
 }

@@ -6,6 +6,16 @@
 
 G_BEGIN_DECLS
 
+/* Enum for value types */
+typedef enum {
+  _UNDEFINED,
+  _NULL,
+  _BOOLEAN,
+  _NUMBER,
+  _STRING,
+  _OBJECT
+} WkJsCoreType;
+
 /*
  * Type declaration
  */
@@ -19,6 +29,10 @@ G_DECLARE_FINAL_TYPE (WkJsCoreResult,
 /*
  * Method definitions
  */
+WkJsCoreType
+wk_js_core_result_get_result_type (WkJsCoreResult *wkjscresult,
+                                   WebKitJavascriptResult *js_result);
+
 gchar*
 wk_js_core_result_process_result_as_string (WkJsCoreResult *wkjscresult,
                                             WebKitJavascriptResult *js_result);
