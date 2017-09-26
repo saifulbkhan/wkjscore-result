@@ -62,6 +62,28 @@ wk_js_core_result_process_result_as_number (WkJsCoreResult *wkjscresult,
   return (gdouble) number;
 }
 
+/*
+ * wk_js_core_result_process_result_as_boolean:
+ * @wkjscresult: a WkJsCoreResult object
+ * @js_result: a WebKitJavascriptResult object to process value from
+ *
+ * Extracts the boolean value within a WebKitJavascriptResult object
+ *
+ * Return value: Boolean value
+ */
+gboolean
+wk_js_core_result_process_result_as_boolean(WkJsCoreResult *wkjscresult,
+                                            WebKitJavascriptResult *js_result)
+{
+  JSValueRef js_value;
+  bool boolean;
+
+  js_value = webkit_javascript_result_get_value (js_result);
+  boolean = JSValueToBoolean (webkit_javascript_result_get_global_context (js_result),
+                              js_value);
+  return (gboolean) boolean;
+}
+
 static void
 wk_js_core_result_class_init (WkJsCoreResultClass *klass)
 {
