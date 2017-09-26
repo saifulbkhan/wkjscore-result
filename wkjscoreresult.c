@@ -53,6 +53,38 @@ wk_js_core_result_get_result_type (WkJsCoreResult *wkjscresult,
 }
 
 /*
+ * wk_js_core_result_create_json_from_result:
+ * @wkjscresult: a WkJsCoreResult object
+ * @js_result: a WebKitJavasctiptResult object to create JSON from
+ *
+ * Creates a JSON string representation of the javascript value
+ *
+ * Return value: Pointer to string
+ */
+gchar*
+wk_js_core_result_create_json_from_result (WkJsCoreResult         *wkjscresult,
+                                           WebKitJavascriptResult *js_result,
+                                           guint indent)
+{
+  JSValueRef js_value;
+  JSContextRef js_ctx;
+  JSStringRef js_string;
+  size_t max_size;
+  char *retval = NULL;
+
+  js_value = webkit_javascript_result_get_value (js_result);
+  js_ctx = webkit_javascript_result_get_global_context (js_result);
+  js_string = JSValueCreateJSONString (js_ctx, js_value, indent, NULL);
+  max_size = JSStringGetMaximumUTF8CStringSize (js_string);
+  if (max_size) {
+    retval = g_malloc (max_size);
+    JSStringGetUTF8CString (js_string, retval, max_size);
+  }
+
+  return (gchar*) retval;
+}
+
+/*
  * wk_js_core_result_process_result_as_string:
  * @wkjscresult: a WkJsCoreResult object
  * @js_result: a WebKitJavascriptResult object to process value from

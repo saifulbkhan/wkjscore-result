@@ -34,6 +34,11 @@ wk_js_core_result_get_result_type (WkJsCoreResult *wkjscresult,
                                    WebKitJavascriptResult *js_result);
 
 gchar*
+wk_js_core_result_create_json_from_result (WkJsCoreResult *wkjscresult,
+                                           WebKitJavascriptResult *js_result,
+                                           guint indent);
+
+gchar*
 wk_js_core_result_process_result_as_string (WkJsCoreResult *wkjscresult,
                                             WebKitJavascriptResult *js_result);
 
