@@ -1,43 +1,122 @@
 #include <JavaScriptCore/JavaScript.h>
 #include "wkjscoreresult.h"
 
-struct _WkJsCoreResult
+typedef struct
 {
-  GObject parent_instance;
+  WebKitJavascriptResult *jsresult;
+} WkJsCoreResultPrivate;
+
+enum
+{
+  PROP_JSRESULT = 1,
+  N_PROPERTIES
 };
 
-G_DEFINE_TYPE (WkJsCoreResult, wk_js_core_result, G_TYPE_OBJECT)
+static GParamSpec *obj_properties[N_PROPERTIES] = { NULL, };
+
+G_DEFINE_TYPE_WITH_PRIVATE (WkJsCoreResult, wk_js_core_result, G_TYPE_OBJECT)
 
 static void
 wk_js_core_result_init (WkJsCoreResult *self)
 {
-  /* No special initializaion */
+  WkJsCoreResultPrivate *priv = wk_js_core_result_get_instance_private (self);
+  priv->jsresult = NULL;
+}
+
+static void
+wk_js_core_result_set_property (GObject      *object,
+                                guint         property_id,
+                                const GValue *value,
+                                GParamSpec   *pspec)
+{
+  WkJsCoreResult *self = WK_JS_CORE_RESULT (object);
+  WkJsCoreResultPrivate *priv = wk_js_core_result_get_instance_private (self);
+
+  switch (property_id)
+    {
+    case PROP_JSRESULT:
+      priv->jsresult = g_value_get_pointer (value);
+      break;
+
+    default:
+      /* We don't have any other property... */
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
+}
+
+static void
+wk_js_core_result_get_property (GObject    *object,
+                                guint       property_id,
+                                GValue     *value,
+                                GParamSpec *pspec)
+{
+  WkJsCoreResult *self = WK_JS_CORE_RESULT (object);
+  WkJsCoreResultPrivate *priv = wk_js_core_result_get_instance_private (self);
+
+  switch (property_id)
+    {
+    case PROP_JSRESULT:
+      g_value_set_pointer (value, priv->jsresult);
+      break;
+
+    default:
+      /* We don't have any other property... */
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
 }
 
 static void
 wk_js_core_result_class_init (WkJsCoreResultClass *klass)
 {
-  /* No special class initialization */
+  GObjectClass *object_class = G_OBJECT_CLASS (klass);
+
+  object_class->set_property = wk_js_core_result_set_property;
+  object_class->get_property = wk_js_core_result_get_property;
+
+  obj_properties[PROP_JSRESULT] =
+    g_param_spec_pointer ("jsresult",
+                          "JS Result",
+                          "A Javascript result object.",
+                          G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+
+  g_object_class_install_properties (object_class,
+                                     N_PROPERTIES,
+                                     obj_properties);
+
+}
+
+WkJsCoreResult*
+wk_js_core_result_new (WebKitJavascriptResult *jsresult)
+{
+  WkJsCoreResult *result = g_object_new (WKJSCORE_TYPE_RESULT,
+                                         "jsresult", jsresult,
+                                         NULL);
+  return result;
 }
 
 /*
  * wk_js_core_result_get_result_type
  * @wkjscoreresult: a WkJsCoreResult object
- * @js_result: a WebKitJavascriptResult object to get value type from
+ * @jsresult: a WebKitJavascriptResult object to get value type from
  *
- * Gets the type of value represented by js_result object
+ * Gets the type of value represented by jsresult object
  *
  * Return value: A WkJsCoreType value
  */
 WkJsCoreType
-wk_js_core_result_get_result_type (WkJsCoreResult         *result,
-                                   WebKitJavascriptResult *js_result)
+wk_js_core_result_get_result_type (WkJsCoreResult *result)
 {
   JSValueRef js_value;
   JSContextRef js_ctx;
+  WebKitJavascriptResult *jsresult;
 
-  js_value = webkit_javascript_result_get_value (js_result);
-  js_ctx = webkit_javascript_result_get_global_context(js_result);
+  g_object_get (result, "jsresult", &jsresult, NULL);
+
+  js_value = webkit_javascript_result_get_value (jsresult);
+  js_ctx = webkit_javascript_result_get_global_context (jsresult);
+
   if (JSValueIsUndefined (js_ctx, js_value))
     return _UNDEFINED;
   if (JSValueIsNull (js_ctx, js_value))
@@ -70,23 +149,24 @@ js_string_to_gchar (JSStringRef js_string)
 /*
  * wk_js_core_result_create_json_from_result:
  * @wkjscresult: a WkJsCoreResult object
- * @js_result: a WebKitJavasctiptResult object to create JSON from
+ * @jsresult: a WebKitJavasctiptResult object to create JSON from
  *
  * Creates a JSON string representation of the javascript value
  *
  * Return value: Pointer to string
  */
 gchar*
-wk_js_core_result_create_json_from_result (WkJsCoreResult         *result,
-                                           WebKitJavascriptResult *js_result,
-                                           guint                  indent)
+wk_js_core_result_create_json_from_result (WkJsCoreResult *result, guint indent)
 {
   JSValueRef js_value;
   JSContextRef js_ctx;
   JSStringRef js_string;
+  WebKitJavascriptResult *jsresult;
 
-  js_value = webkit_javascript_result_get_value (js_result);
-  js_ctx = webkit_javascript_result_get_global_context (js_result);
+  g_object_get (result, "jsresult", &jsresult, NULL);
+
+  js_value = webkit_javascript_result_get_value (jsresult);
+  js_ctx = webkit_javascript_result_get_global_context (jsresult);
   js_string = JSValueCreateJSONString (js_ctx, js_value, indent, NULL);
 
   return js_string_to_gchar(js_string);
@@ -95,22 +175,24 @@ wk_js_core_result_create_json_from_result (WkJsCoreResult         *result,
 /*
  * wk_js_core_result_process_result_as_string:
  * @wkjscresult: a WkJsCoreResult object
- * @js_result: a WebKitJavascriptResult object to process value from
+ * @jsresult: a WebKitJavascriptResult object to process value from
  *
  * Extracts the string value within a WebKitJavascriptResult object
  *
  * Return value: Pointer to string
  */
 gchar*
-wk_js_core_result_process_result_as_string (WkJsCoreResult         *result,
-                                            WebKitJavascriptResult *js_result)
+wk_js_core_result_process_result_as_string (WkJsCoreResult *result)
 {
   JSValueRef js_value;
   JSContextRef js_ctx;
   JSStringRef js_string;
+  WebKitJavascriptResult *jsresult;
 
-  js_value = webkit_javascript_result_get_value (js_result);
-  js_ctx = webkit_javascript_result_get_global_context (js_result);
+  g_object_get (result, "jsresult", &jsresult, NULL);
+
+  js_value = webkit_javascript_result_get_value (jsresult);
+  js_ctx = webkit_javascript_result_get_global_context (jsresult);
   js_string = JSValueToStringCopy (js_ctx, js_value, NULL);
 
   return js_string_to_gchar(js_string);
@@ -119,22 +201,24 @@ wk_js_core_result_process_result_as_string (WkJsCoreResult         *result,
 /*
  * wk_js_core_result_process_result_as_number:
  * @wkjscresult: a WkJsCoreResult object
- * @js_result: a WebKitJavascriptResult object to process value from
+ * @jsresult: a WebKitJavascriptResult object to process value from
  *
  * Extracts the number value within a WebKitJavascriptResult object
  *
  * Return value: Number as double
  */
 gdouble
-wk_js_core_result_process_result_as_number (WkJsCoreResult         *result,
-                                            WebKitJavascriptResult *js_result)
+wk_js_core_result_process_result_as_number (WkJsCoreResult *result)
 {
   JSValueRef js_value;
   JSContextRef js_ctx;
   double number;
+  WebKitJavascriptResult *jsresult;
 
-  js_value = webkit_javascript_result_get_value (js_result);
-  js_ctx = webkit_javascript_result_get_global_context (js_result);
+  g_object_get (result, "jsresult", &jsresult, NULL);
+
+  js_value = webkit_javascript_result_get_value (jsresult);
+  js_ctx = webkit_javascript_result_get_global_context (jsresult);
   number = JSValueToNumber (js_ctx, js_value, NULL);
   return (gdouble) number;
 }
@@ -142,22 +226,24 @@ wk_js_core_result_process_result_as_number (WkJsCoreResult         *result,
 /*
  * wk_js_core_result_process_result_as_boolean:
  * @wkjscresult: a WkJsCoreResult object
- * @js_result: a WebKitJavascriptResult object to process value from
+ * @jsresult: a WebKitJavascriptResult object to process value from
  *
  * Extracts the boolean value within a WebKitJavascriptResult object
  *
  * Return value: Boolean value
  */
 gboolean
-wk_js_core_result_process_result_as_boolean (WkJsCoreResult         *result,
-                                             WebKitJavascriptResult *js_result)
+wk_js_core_result_process_result_as_boolean (WkJsCoreResult *result)
 {
   JSValueRef js_value;
   JSContextRef js_ctx;
   bool boolean;
+  WebKitJavascriptResult *jsresult;
 
-  js_value = webkit_javascript_result_get_value (js_result);
-  js_ctx = webkit_javascript_result_get_global_context (js_result);
+  g_object_get (result, "jsresult", &jsresult, NULL);
+
+  js_value = webkit_javascript_result_get_value (jsresult);
+  js_ctx = webkit_javascript_result_get_global_context (jsresult);
   boolean = JSValueToBoolean (js_ctx, js_value);
   return (gboolean) boolean;
 }
