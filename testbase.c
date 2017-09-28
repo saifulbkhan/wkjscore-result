@@ -34,16 +34,19 @@ web_view_javascript_finished (GObject      *object,
       g_assert (wk_js_core_result_get_result_type (res) == _BOOLEAN);
       g_assert (boolean == g_value_get_boolean (expected));
       break;
+
     case G_TYPE_INT:
       integer = wk_js_core_result_process_result_as_number (res);
       g_assert (wk_js_core_result_get_result_type (res) == _NUMBER);
       g_assert (integer == g_value_get_int (expected));
       break;
+
     case G_TYPE_DOUBLE:
       dub = wk_js_core_result_process_result_as_number (res);
       g_assert (wk_js_core_result_get_result_type (res) == _NUMBER);
       g_assert (dub == g_value_get_double (expected));
       break;
+
     case G_TYPE_STRING:
       /* treat as json request if given a positive indentation value
        * otherwise process as regular string */
@@ -56,6 +59,10 @@ web_view_javascript_finished (GObject      *object,
         g_assert (wk_js_core_result_get_result_type(res) == _STRING);
         g_assert (g_strcmp0 (string, g_value_get_string (expected)) == 0);
       }
+      break;
+
+    default:
+      // Not more test types.
       break;
     }
   g_print ("Javascript execution complete.\n");
