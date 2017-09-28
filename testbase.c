@@ -20,7 +20,7 @@ web_view_javascript_finished (GObject      *object,
                                                     result,
                                                     &error);
   if (!jsresult) {
-    g_warning ("Error running javascript: %s", error->message);
+    g_error ("Error running javascript: %s", error->message);
     g_error_free (error);
     return;
   }
