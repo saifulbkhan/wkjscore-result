@@ -1,8 +1,8 @@
 #include "testbase.h"
 
-const gchar *HTML = "<p id=" "para" ">lorem ipsum</p>";
-const gchar *JS = "document.getElementById('para').innerHTML";
-const gchar *EXP = "lorem ipsum";
+const gchar *HTML = "<p>lorem ipsum</p><p>dolor sit amet</p>";
+const gchar *JS = "document.getElementsByTagName('p').length";
+gint EXP = 2;
 
 int
 main (int    argc,
@@ -13,8 +13,8 @@ main (int    argc,
   GValue exp = G_VALUE_INIT;
   TestData *test_data;
 
-  g_value_init (&exp, G_TYPE_STRING);
-  g_value_set_static_string (&exp, EXP);
+  g_value_init (&exp, G_TYPE_INT);
+  g_value_set_int (&exp, EXP);
 
   test_data = g_malloc (sizeof (TestData));
   test_data->indent = 0;
@@ -22,7 +22,7 @@ main (int    argc,
   test_data->javascript = JS;
   test_data->expected = &exp;
 
-  app = test_base_generate_test_run ("org.wkjscore.teststring",
+  app = test_base_generate_test_run ("org.wkjscore.testint",
                                      G_APPLICATION_FLAGS_NONE,
                                      test_data);
   status = g_application_run (G_APPLICATION (app), argc, argv);
