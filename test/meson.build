@@ -25,7 +25,14 @@ test_bool = executable('test-bool-result-' + api_path,
                        include_directories: incdirs,
                        link_with: libwkjscore)
 
+test_json = executable('test-json-result-' + api_path,
+                       ['testbase.h', 'testbase.c', 'testjson.c'],
+                       dependencies: test_deps,
+                       include_directories: incdirs,
+                       link_with: libwkjscore)
+
 test('Test string retrieval', test_string, is_parallel: false)
 test('Test integer retrieval', test_int, is_parallel: false)
 test('Test double retrieval', test_double, is_parallel: false)
 test('Test boolean retrieval', test_bool, is_parallel:false)
+test('Test json retrieval', test_json, is_parallel: false)
