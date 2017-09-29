@@ -33,7 +33,10 @@ export LD_LIBRARY_PATH=LD_LIBRARY_PATH:$HOME/.local/lib64
 export GI_TYPELIB_PATH=GI_TYPELIB_PATH:$HOME/.local/lib64/girepository-1.0
 ```
 
-Replace the paths with your own custom installation paths.
+Replace the paths with your own custom installation paths. This is supposed to
+be temporary and if you want to preserve this over every user session put the
+above exports in your .bashrc or .zshrc. Bear in mind that some people consider
+setting `LD_LIBRARY_PATH` harmful, so feel free to ignore my advice.
 
 To uninstall the library simply perform:
 
