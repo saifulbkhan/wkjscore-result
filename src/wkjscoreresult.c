@@ -51,7 +51,7 @@ wk_js_core_result_set_property (GObject      *object,
   switch (property_id)
     {
     case PROP_JSRESULT:
-      priv->jsresult = g_value_get_pointer (value);
+      priv->jsresult = g_value_get_boxed (value);
       break;
 
     default:
@@ -73,7 +73,7 @@ wk_js_core_result_get_property (GObject    *object,
   switch (property_id)
     {
     case PROP_JSRESULT:
-      g_value_set_pointer (value, priv->jsresult);
+      g_value_set_boxed (value, priv->jsresult);
       break;
 
     default:
@@ -92,10 +92,11 @@ wk_js_core_result_class_init (WkJsCoreResultClass *klass)
   object_class->get_property = wk_js_core_result_get_property;
 
   obj_properties[PROP_JSRESULT] =
-    g_param_spec_pointer ("jsresult",
-                          "JS Result",
-                          "A Javascript result object.",
-                          G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
+    g_param_spec_boxed ("jsresult",
+                        "JS Result",
+                        "A Javascript result object.",
+                        WEBKIT_TYPE_JAVASCRIPT_RESULT,
+                        G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
 
   g_object_class_install_properties (object_class,
                                      N_PROPERTIES,
