@@ -73,8 +73,8 @@ webview.run_javascript('5 / 2', None, js_finished_callback, None)
 ```
 
 This project needs some documentation but reading the source or even just
-the doc comments in [wkjscoreresult.c](https://github.com/saifulbkhan/wkjscore-result/blob/master/src/wkjscoreresult.c)
-(its quite compact) should give you a fair idea what its capable of.
+the doc comments in [wkjscoreresult.h](https://github.com/saifulbkhan/wkjscore-result/blob/master/src/wkjscoreresult.h)
+should give you a fair idea what its capable of.
 
 
 ## Testing
