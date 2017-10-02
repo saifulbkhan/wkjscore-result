@@ -48,23 +48,73 @@ struct _WkJsCoreResultClass
 };
 
 /*
- * Method definitions
+ * wk_js_core_result_new
+ * @jsresult: a WebKitJavascriptResult object
+ *
+ * Create a new WkJsCoreResult object representing
+ * @jsresult and providing nicer interface to extract
+ * valuable information from it.
+ *
+ * Return value: new WkJsCoreResult object
  */
 WkJsCoreResult*
 wk_js_core_result_new (WebKitJavascriptResult *jsresult);
 
+/*
+ * wk_js_core_result_get_result_type
+ * @wkjscoreresult: a WkJsCoreResult object
+ *
+ * Gets the type of value stored in @result
+ *
+ * Return value: A WkJsCoreType value
+ */
 WkJsCoreType
 wk_js_core_result_get_result_type (WkJsCoreResult *result);
 
+/*
+ * wk_js_core_result_create_json_from_result:
+ * @wkjscresult: a WkJsCoreResult object
+ * @indent: number of indentation spaces
+ *
+ * Creates a JSON string for the JS object in @result.
+ * The string is indented by @indent number of space
+ * at each level of nesting.
+ *
+ * Return value: Pointer to string
+ */
 gchar*
 wk_js_core_result_create_json_from_result (WkJsCoreResult *result, guint indent);
 
+/*
+ * wk_js_core_result_process_result_as_string:
+ * @wkjscresult: a WkJsCoreResult object
+ *
+ * Extracts the string value represented by @result
+ *
+ * Return value: Pointer to string
+ */
 gchar*
 wk_js_core_result_process_result_as_string (WkJsCoreResult *result);
 
+/*
+ * wk_js_core_result_process_result_as_number:
+ * @wkjscresult: a WkJsCoreResult object
+ *
+ * Extracts the number value represented by @result
+ *
+ * Return value: Number as double
+ */
 gdouble
 wk_js_core_result_process_result_as_number (WkJsCoreResult *result);
 
+/*
+ * wk_js_core_result_process_result_as_boolean:
+ * @wkjscresult: a WkJsCoreResult object
+ *
+ * Extracts the boolean value represented by @result
+ *
+ * Return value: Boolean value
+ */
 gboolean
 wk_js_core_result_process_result_as_boolean (WkJsCoreResult *result);
 

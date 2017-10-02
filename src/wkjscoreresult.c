@@ -113,15 +113,6 @@ wk_js_core_result_new (WebKitJavascriptResult *jsresult)
   return result;
 }
 
-/*
- * wk_js_core_result_get_result_type
- * @wkjscoreresult: a WkJsCoreResult object
- * @jsresult: a WebKitJavascriptResult object to get value type from
- *
- * Gets the type of value represented by jsresult object
- *
- * Return value: A WkJsCoreType value
- */
 WkJsCoreType
 wk_js_core_result_get_result_type (WkJsCoreResult *result)
 {
@@ -163,15 +154,6 @@ js_string_to_gchar (JSStringRef js_string)
   return (gchar*) retval;
 }
 
-/*
- * wk_js_core_result_create_json_from_result:
- * @wkjscresult: a WkJsCoreResult object
- * @jsresult: a WebKitJavasctiptResult object to create JSON from
- *
- * Creates a JSON string representation of the javascript value
- *
- * Return value: Pointer to string
- */
 gchar*
 wk_js_core_result_create_json_from_result (WkJsCoreResult *result, guint indent)
 {
@@ -189,15 +171,6 @@ wk_js_core_result_create_json_from_result (WkJsCoreResult *result, guint indent)
   return js_string_to_gchar(js_string);
 }
 
-/*
- * wk_js_core_result_process_result_as_string:
- * @wkjscresult: a WkJsCoreResult object
- * @jsresult: a WebKitJavascriptResult object to process value from
- *
- * Extracts the string value within a WebKitJavascriptResult object
- *
- * Return value: Pointer to string
- */
 gchar*
 wk_js_core_result_process_result_as_string (WkJsCoreResult *result)
 {
@@ -215,15 +188,6 @@ wk_js_core_result_process_result_as_string (WkJsCoreResult *result)
   return js_string_to_gchar(js_string);
 }
 
-/*
- * wk_js_core_result_process_result_as_number:
- * @wkjscresult: a WkJsCoreResult object
- * @jsresult: a WebKitJavascriptResult object to process value from
- *
- * Extracts the number value within a WebKitJavascriptResult object
- *
- * Return value: Number as double
- */
 gdouble
 wk_js_core_result_process_result_as_number (WkJsCoreResult *result)
 {
@@ -240,15 +204,6 @@ wk_js_core_result_process_result_as_number (WkJsCoreResult *result)
   return (gdouble) number;
 }
 
-/*
- * wk_js_core_result_process_result_as_boolean:
- * @wkjscresult: a WkJsCoreResult object
- * @jsresult: a WebKitJavascriptResult object to process value from
- *
- * Extracts the boolean value within a WebKitJavascriptResult object
- *
- * Return value: Boolean value
- */
 gboolean
 wk_js_core_result_process_result_as_boolean (WkJsCoreResult *result)
 {
